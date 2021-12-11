@@ -36,10 +36,36 @@ class Template {
       this.hostElement.insertAdjacentElement('afterbegin',this.element)
     }
 
+    getUserInfo(): [string,string,number] | void {
+    const eneterdTitle = this.titleInputElement.value;
+    const enteredDescription = this.descriptionInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
+
+    if( eneterdTitle.trim(). length === 0 ||
+    enteredDescription.trim().length === 0 ||
+    enteredPeople.trim().length === 0 ) {
+      alert('Invalid input')
+      return
+    } else {
+      return [eneterdTitle,enteredDescription,+enteredPeople]
+    }
+  }
+
+  private clearInput() {
+    this.titleInputElement.value = '';
+    this.descriptionInputElement.value = '';
+    this.peopleInputElement.value = '';
+  }
+
     @autoBind
     private submitHandler (e: Event) {
       e.preventDefault();
-      console.log(this.titleInputElement.value)
+      const userInput = this.getUserInfo()
+      if (Array.isArray(userInput)) {
+        const [title,desc,people] = userInput;
+        console.log(title,desc,people)
+        this.clearInput()
+      }
     }
 
     private configure() {
