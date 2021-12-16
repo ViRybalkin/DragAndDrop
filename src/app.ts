@@ -1,6 +1,23 @@
+enum ProjectStatus {
+  active,
+  finished,
+}
+
+type Listener = (items: Project[]) => void
+
+class Project{
+  constructor(
+    public id:string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+
 class ProjectsState {
-  private projects: any[] = [];
-  private listeners: any = []
+  private projects: Project[] = [];
+  private listeners: Listener[] = []
   private static instance: ProjectsState;
 
   private constructor() {
@@ -13,17 +30,12 @@ class ProjectsState {
     return this.instance
   }
 
-   addListeners(listenersFn: Function){
+   addListeners(listenersFn: Listener){
     this.listeners.push(listenersFn)
    }
 
    addProject(title: string, description: string, nomOfPeople: number) {
-     const newProject = {
-       id: Math.random().toString(),
-       title: title,
-       description: description,
-       people: nomOfPeople,
-     }
+     const newProject = new Project(Math.random().toString(),title,description,nomOfPeople,ProjectStatus.active)
      this.projects.push(newProject)
      for (const listenerFn of this.listeners) {
        listenerFn(this.projects.slice())
@@ -48,8 +60,7 @@ function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const adjDescriptor: PropertyDescriptor = {
     configurable: true,
     get() {
-      const boundFn = originalMethod.bind(this)
-      return boundFn
+      return originalMethod.bind(this)
     }
   }
   return adjDescriptor
@@ -79,7 +90,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
   element: HTMLElement;
-  assignedProjects: any[];
+  assignedProjects: Project[];
 
   constructor(private type: 'active' | 'finished') {
     this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement;
@@ -89,12 +100,12 @@ class ProjectList {
     this.element = importNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`
 
-    projectState.addListeners((projects: any[]) => {
+    projectState.addListeners((projects: Project[]) => {
       this.assignedProjects = projects;
       this.renderProjects()
     })
     this.attach()
-    this.renderConten()
+    this.renderContent()
   }
 
   private renderProjects(){
@@ -106,7 +117,7 @@ class ProjectList {
     }
   }
 
-  private renderConten(){
+  private renderContent(){
     const listId = `${this.type}-project-list`
     this.element.querySelector('ul')!.id = listId
     this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS'
