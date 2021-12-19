@@ -82,10 +82,10 @@ function validate(validate: Validateble) {
     isValid = isValid && validate.value.length <= validate.maxLength
   }
   if (validate.min && validate.value != null && typeof validate.value === 'number') {
-    isValid = isValid && validate.value > validate.min
+    isValid = isValid && validate.value >= validate.min
   }
   if (validate.max && validate.value != null && typeof validate.value === 'number') {
-    isValid = isValid && validate.value < validate.max
+    isValid = isValid && validate.value <= validate.max
   }
   return isValid
 }
@@ -118,6 +118,13 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 class ProjectItem extends Component<HTMLUListElement,HTMLLIElement>{
   private project: Project;
 
+  get persons() {
+    if(this.project.people === 1) {
+      return '1 person'
+    }
+    return `${this.project.people} persons`
+  }
+
   constructor(hostId: string, project: Project) {
     super('single-project', hostId, false,project.id);
     this.project = project
@@ -128,8 +135,8 @@ class ProjectItem extends Component<HTMLUListElement,HTMLLIElement>{
   configure(){}
   renderContent(){
     this.element.querySelector('h2')!.textContent = this.project.title;
-    this.element.querySelector('h3')!.textContent = this.project.people.toString();
-    this.element.querySelector('h3')!.textContent = this.project.description;
+    this.element.querySelector('h3')!.textContent = this.persons + ' assigned';
+    this.element.querySelector('p')!.textContent = this.project.description;
 
   }
 }
