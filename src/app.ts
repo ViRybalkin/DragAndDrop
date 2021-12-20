@@ -1,28 +1,7 @@
-interface Draggable {
-  dragStartHandler(event: DragEvent): void;
-  dragEndHandler(event: DragEvent): void;
-}
+/// <reference path="drag-and-drop-namespace.ts" />
+/// <reference path="project-model-namespace.ts" />
 
-interface DragTarget {
-  dragOverHandler(event: DragEvent): void;
-  dropHandler(event: DragEvent): void;
-  dragLeaveHandler(event: DragEvent): void;
-}
-
-enum ProjectStatus {
-  active,
-  finished,
-}
-
-class Project{
-  constructor(
-    public id:string,
-    public title: string,
-    public description: string,
-    public people: number,
-    public status: ProjectStatus
-  ) {}
-}
+namespace App{
 
 type Listener<T> = (items: T[]) => void
 
@@ -310,10 +289,9 @@ class Template extends Component<HTMLDivElement, HTMLFormElement>{
         this.clearInput()
       }
     }
-
+  }
+  new Template();
+  new ProjectList('active');
+  new ProjectList('finished');
 }
-
-const project = new Template();
-const activeProjectList = new ProjectList('active');
-const finishedProjectList = new ProjectList('finished');
 
